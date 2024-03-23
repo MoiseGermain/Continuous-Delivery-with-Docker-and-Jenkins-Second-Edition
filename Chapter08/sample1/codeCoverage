@@ -1,0 +1,36 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.8.7" // Specify the JaCoCo version
+}
+
+test {
+    finalizedBy jacocoTestReport // generate the report after tests run
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        csv.enabled = false
+        html.enabled = true // Generate HTML report
+    }
+}
+
+task codeCoverage(type: JacocoReport) {
+    // Depends on the 'test' task to run tests and collect coverage information
+    dependsOn test
+
+    // Set the execution data file location
+    executionData file("${buildDir}/jacoco/test.exec")
+
+    // Set the class files and source files locations
+    sourceSets sourceSets.main
+
+    // Set the output directories for the reports
+    reports {
+        xml.enabled = true
+        csv.enabled = true
+        html.destination file("${buildDir}/reports/coverage")
+    }
+}
